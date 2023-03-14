@@ -1,0 +1,6 @@
+{
+  "git.ignoreLimitWarning": true,
+  "[javascript]": {
+    "javascript.preferences.quoteStyle":"single",
+  },
+}

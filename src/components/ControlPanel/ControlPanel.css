@@ -1,0 +1,9 @@
+.control-panel {
+  height: 38px;
+  width: 100%;
+  grid-column: 2/3;
+  align-self: end;
+  border-radius: 6px;
+  display: flex;
+  background: #F3F4F6;
+}

@@ -1,0 +1,26 @@
+.info-block {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed #C4C4C4;
+  border-radius: 6px;
+}
+
+.info-block__accent-text {
+  color: #5D5FEF;
+  font-size: 14px;
+  line-height: 17px;
+  font-weight: 500;
+  margin: 12px 0 0;
+}
+
+.info-block__text {
+  max-width: 120px;
+  color: #6B7280;
+  font-size: 12px;
+  line-height: 14px;
+  margin: 4px 0 0;
+  text-align: center;
+}
