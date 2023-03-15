@@ -1,5 +1,6 @@
 import './ControlButton.css';
 import { useControlButton } from '../../futures/controls/useControlButton';
+import { capitalize } from '../../utils/utils';
 
 const ControlButton = ({ type }) => {
   const [mode, onClick] = useControlButton();
@@ -10,7 +11,7 @@ const ControlButton = ({ type }) => {
       className={`control-button ${activeClass}`}
       onClick={() => onClick(type)}>
       <span className={`control-button__icon-${type}`}></span>
-      {type}
+      {capitalize(type)}
     </button>
   )
 }

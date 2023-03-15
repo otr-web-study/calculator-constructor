@@ -1,0 +1,7 @@
+.numbers {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.numbers__long-btn {
+  grid-column: 1/3;
+}

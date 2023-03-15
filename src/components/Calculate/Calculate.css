@@ -1,0 +1,13 @@
+.calculate {
+
+}
+
+.calculate__btn {
+  background-color: #5D5FEF;
+  color: white;
+}
+
+.calculate__btn:active {
+  background-color: white;
+  color: black;
+}
