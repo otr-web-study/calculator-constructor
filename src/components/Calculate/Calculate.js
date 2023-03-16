@@ -2,9 +2,9 @@ import Button from '../Button';
 import BlockContainer from '../BlockContainer';
 import './Calculate.css';
 
-const Calculate = ({isChosen}) => {
+const Calculate = (props) => {
   return (
-    <BlockContainer inactive={isChosen}>
+    <BlockContainer {...props}>
       <Button extraClass='calculate__btn'>=</Button>
     </BlockContainer>
   );

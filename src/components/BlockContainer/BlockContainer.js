@@ -1,10 +1,26 @@
+import { useDragAndDrop } from '../../futures/calcComponents/useDragAndDrop';
 import './BlockContainer.css';
 
-const BlockContainer = ({children, inactive=false, extraClass=''}) => {
-  const inactiveClass = inactive ? 'block-container_inactive' : '';
+const BlockContainer = ({children, dragInfo, draggable=false, classes=[], extraClass=''}) => {
+  const classNames = classes.join(' ');
+  const [
+    isAllowedDrag,
+    handleDragStart,
+    handleDragLeave,
+    handleDragOver,
+    handleDragEnd,
+    handleDrop,
+  ] = useDragAndDrop();
 
   return (
-    <div className={`block-container ${inactiveClass} ${extraClass}`}>
+    <div 
+      className={`block-container ${classNames} ${extraClass}`}
+      draggable={draggable && isAllowedDrag}
+      onDragStart={(e) => handleDragStart(e, dragInfo)}
+      onDragLeave={(e) => handleDragLeave(e, dragInfo)}
+      onDragOver={(e) => handleDragOver(e, dragInfo)}
+      onDragEnd={(e) => handleDragEnd(e, dragInfo)}
+      onDrop={(e) => handleDrop(e, dragInfo)}>
       {children}
     </div>
   );

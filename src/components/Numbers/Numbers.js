@@ -3,7 +3,7 @@ import Button from '../Button';
 import { getNumbers } from '../../utils/utils';
 import './Numbers.css';
 
-const Numbers = ({isChosen}) => {
+const Numbers = (props) => {
   const numbers = getNumbers();
   const buttons = numbers.map(title => (
     <Button key={title}>
@@ -20,7 +20,7 @@ const Numbers = ({isChosen}) => {
   )
 
   return (
-    <BlockContainer inactive={isChosen} extraClass='numbers'>
+    <BlockContainer {...props} extraClass='numbers'>
       {buttons}
     </BlockContainer>
   );

@@ -1,32 +1,20 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
-import { selectTemplateComponents, addExtraClass } from './calcComponentsSlice';
+import { selectCalcComponents } from './calcComponentsSlice';
 import { selectControls } from '../controls/controlsSlice';
-import { Display } from '../../components/Display';
+import { Display, ActiveDisplay } from '../../components/Display';
 import Operations from '../../components/Operations';
 import Numbers from '../../components/Numbers';
 import Calculate from '../../components/Calculate';
 
-export const useTemplatePanel = () => {
-  const dispatch = useDispatch();
-  const items = useSelector(selectTemplateComponents);
+export const useCalcPanel = () => {
+  const items = useSelector(selectCalcComponents);
   const { mode } = useSelector(selectControls);
-
-  useEffect(() => {
-    items.map(({id}) => {
-      dispatch(addExtraClass({
-        id, 
-        extraClass: 'block-container_type_template',
-        panel: 'template',
-      }));
-    })
-  }, []);
 
   const render = ({id, type, classes, draggable}) => {
     const props = {
       dragInfo: {
-        panel: 'template',
+        panel: 'calculator',
         id
       },
       classes,
@@ -37,7 +25,9 @@ export const useTemplatePanel = () => {
     switch(type) {
     case 'display':
       return (
-        <Display value={0} {...props} />
+        mode === 'runtime' ?
+          <ActiveDisplay {...props} /> :
+          <Display {...props} value={0} />
       )
     case 'operations':
       return (
@@ -56,5 +46,5 @@ export const useTemplatePanel = () => {
     }
   }
 
-  return [items, mode, render];
+  return [items, render];
 }

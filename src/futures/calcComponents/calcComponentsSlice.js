@@ -1,29 +1,34 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  templateComponents: [
+  template: [
     {
       id: 1,
       type: 'display',
-      isChosen: false,
+      classes: [],
+      draggable: true,
     },
     {
       id: 2,
       type: 'operations',
-      isChosen: false,
+      classes: [],
+      draggable: true,
     },
     {
       id: 3,
       type: 'numbers',
-      isChosen: false,
+      classes: [],
+      draggable: true,
     },
     {
       id: 4,
       type: 'calculate',
-      isChosen: false,
+      classes: [],
+      draggable: true,
     }
   ],
-  calcComponents: [],
+  calculator: [],
+  infoClasses: [],
 }
 
 const calcComponentsSlice = createSlice({
@@ -32,16 +37,54 @@ const calcComponentsSlice = createSlice({
   reducers: {
     choseComponent: (state, action) => {
       const id = action.payload;
-      const component = state.templateComponents.find(item => item.id === id);
-      component.isChosen = true;
+      const component = state.template.find(item => item.id === id);
       state.calcComponents.push({
-        id: component.id,
-        type: component.type,
-      })
-    }
+        ...component,
+        classes: [],
+      });
+      component.draggable = false;
+    },
+    moveComponent: ({calculator}, action) => {
+      const { id, idx } = action.payload;
+      const itemIdx = calculator.indexOf(calculator.find(item => item.id === id));
+      [calculator[idx], calculator[itemIdx]] = [calculator[itemIdx], calculator[idx]];
+    },
+    addExtraClass: (state, action) => {
+      const {panel, id, extraClass} = action.payload;
+      const component = state[panel].find(item => item.id === id);
+      component.classes.push(extraClass);
+    },
+    removeExtraClass: (state, action) => {
+      const {panel, id, extraClass} = action.payload;
+      const component = state[panel].find(item => item.id === id);
+      component.classes = component.classes.filter(item => item !== extraClass);
+    },
+    addExtraInfoClass: (state, action) => {
+      state.infoClasses.push(action.payload);
+    },
+    removeExtraInfoClass: (state, action) => {
+      state.infoClasses = state.infoClasses.filter(item => item !== action.payload);
+    },
+    setDraggable: (state, action) => {
+      const { panel, id, draggable } = action.payload;
+      state[panel].forEach(element => {
+        if (element.id === id) {
+          element.draggable = draggable;
+        }
+      });
+    },
   }
 });
 
 export const calcComponentsReducer = calcComponentsSlice.reducer;
-export const { choseComponent } = calcComponentsSlice.actions;
-export const selectTemplateComponents = ({ calcComponents: { templateComponents } }) => templateComponents;
+export const {
+  choseComponent,
+  addExtraClass,
+  removeExtraClass,
+  addExtraInfoClass,
+  removeExtraInfoClass,
+  setDraggable,
+} = calcComponentsSlice.actions;
+export const selectTemplateComponents = ({ calcComponents: { template } }) => template;
+export const selectCalcComponents = ({ calcComponents: { calculator }}) => calculator;
+export const selectInfoClasses = ({ calcComponents: { infoClasses }}) => infoClasses;

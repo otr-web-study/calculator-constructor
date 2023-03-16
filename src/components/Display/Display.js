@@ -4,14 +4,18 @@ import { selectControls } from '../../futures/controls/controlsSlice';
 import BlockContainer from '../BlockContainer';
 import './Display.css';
 
-const Display = ({isChosen}) => {
-  const { display } = useSelector(selectControls);
+export const Display = (props) => {
+  const { value } = props;
 
   return (
-    <BlockContainer inactive={isChosen}>
-      <label className='display'>{display}</label>
+    <BlockContainer {...props}>
+      <label className='display'>{value}</label>
     </BlockContainer>
-  );
+  )
 };
 
-export default Display;
+export const ActiveDisplay = (props) => {
+  const { display } = useSelector(selectControls);
+
+  return <Display value={display} {...props} />
+}
