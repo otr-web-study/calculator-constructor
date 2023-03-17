@@ -6,9 +6,10 @@ import './CalcPanel.css';
 const CalcPanel = () => {
   const [items, render] = useCalcPanel();
 
-  const content = items.length ?
-    items.map(item => render(item)) :
-    <InfoBloc />
+  const content = items.map(item => render(item));
+  if (content.length < 4) {
+    content.push(<InfoBloc key={0} empty={content.length} />)
+  }
 
   return (
     <Container className='calc-panel'>

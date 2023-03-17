@@ -1,1 +1,1 @@
-export {default} from './BlockContainer';
+export {default, BLOCK_INACTIVE, BLOCK_SELECTED} from './BlockContainer';

@@ -1,11 +1,23 @@
 .info-block {
   flex-grow: 1;
-  display: flex;
+  display: flex !important;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   border: 2px dashed #C4C4C4;
   border-radius: 6px;
+}
+
+.info-block_empty {
+  border: none;
+}
+
+.info-block_empty > * {
+  display: none;
+}
+
+.info-block_selected {
+  background-color: #F0F9FF;
 }
 
 .info-block__accent-text {

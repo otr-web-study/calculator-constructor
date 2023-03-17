@@ -13,10 +13,7 @@
 
 .block-container_inactive {
   opacity: .5;
-}
-
-.block-container_selected-full {
-  background-color: #F0F9FF;
+  pointer-events: none;
 }
 
 .block-container_selected {

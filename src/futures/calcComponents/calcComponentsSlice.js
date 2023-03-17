@@ -29,6 +29,7 @@ const initialState = {
   ],
   calculator: [],
   infoClasses: [],
+  draggedInfo: null,
 }
 
 const calcComponentsSlice = createSlice({
@@ -38,7 +39,7 @@ const calcComponentsSlice = createSlice({
     choseComponent: (state, action) => {
       const id = action.payload;
       const component = state.template.find(item => item.id === id);
-      state.calcComponents.push({
+      state.calculator.push({
         ...component,
         classes: [],
       });
@@ -50,9 +51,10 @@ const calcComponentsSlice = createSlice({
       [calculator[idx], calculator[itemIdx]] = [calculator[itemIdx], calculator[idx]];
     },
     addExtraClass: (state, action) => {
-      const {panel, id, extraClass} = action.payload;
-      const component = state[panel].find(item => item.id === id);
-      component.classes.push(extraClass);
+      const {panel, id = null, extraClass} = action.payload;
+      const items = state[panel];
+      const component = items.find(item => item.id === id);
+      component.classes = [...(new Set([...component.classes, extraClass]))];
     },
     removeExtraClass: (state, action) => {
       const {panel, id, extraClass} = action.payload;
@@ -60,7 +62,7 @@ const calcComponentsSlice = createSlice({
       component.classes = component.classes.filter(item => item !== extraClass);
     },
     addExtraInfoClass: (state, action) => {
-      state.infoClasses.push(action.payload);
+      state.infoClasses = [...(new Set([...state.infoClasses, action.payload]))];
     },
     removeExtraInfoClass: (state, action) => {
       state.infoClasses = state.infoClasses.filter(item => item !== action.payload);
@@ -73,6 +75,12 @@ const calcComponentsSlice = createSlice({
         }
       });
     },
+    setDraggedInfo: (state, action) => {
+      state.draggedInfo = action.payload;
+    },
+    removeDraggedInfo: (state) => {
+      state.draggedInfo = null;
+    }
   }
 });
 
@@ -84,7 +92,10 @@ export const {
   addExtraInfoClass,
   removeExtraInfoClass,
   setDraggable,
+  setDraggedInfo,
+  removeDraggedInfo,
 } = calcComponentsSlice.actions;
 export const selectTemplateComponents = ({ calcComponents: { template } }) => template;
 export const selectCalcComponents = ({ calcComponents: { calculator }}) => calculator;
 export const selectInfoClasses = ({ calcComponents: { infoClasses }}) => infoClasses;
+export const selectDraggedInfo = ({ calcComponents: { draggedInfo }}) => draggedInfo;

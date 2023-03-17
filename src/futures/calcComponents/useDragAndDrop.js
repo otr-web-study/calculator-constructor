@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { selectControls } from '../controls/controlsSlice';
@@ -8,40 +7,47 @@ import {
   removeExtraClass,
   removeExtraInfoClass,
   choseComponent,
+  setDraggedInfo,
+  removeDraggedInfo,
+  selectDraggedInfo,
 } from './calcComponentsSlice';
+
+import { INFO_BLOCK_SELECTED } from '../../components/InfoBloc';
+import { BLOCK_INACTIVE, BLOCK_SELECTED } from '../../components/BlockContainer';
 
 export const useDragAndDrop = () => {
   const dispatch = useDispatch();
   const { mode } = useSelector(selectControls);
-  const [currentDragInfo, setCurrentDragInfo] = useState(null);
-  console.log('render', currentDragInfo)
+  const draggedInfo = useSelector(selectDraggedInfo);
 
   const handleDragStart = (e, dragInfo) => {
-    console.log('start', dragInfo)
-    setCurrentDragInfo(dragInfo);
+    dispatch(setDraggedInfo(dragInfo));
   };
 
   const handleDragLeave = (e, { panel, id}) => {
     if (panel === 'template') {
       return;
     }
-    if (id === 0) {
-      dispatch(removeExtraInfoClass('block-container_selected-full'));
+
+    if (isInfoBlock(id)) {
+      dispatch(removeExtraInfoClass(INFO_BLOCK_SELECTED));
+    } else {
+      dispatch(removeExtraClass({panel: 'calculator', id, extraClass: BLOCK_SELECTED}))
     }
 
   };
 
-  const handleDragOver = (e, { panel, id}) => {
+  const handleDragOver = (e, { panel, id}, classes) => {
     e.preventDefault();
-    if (panel === 'template' || id === 1) {
+    if (panel === 'template') {
       return;
     }
-    if (id === 0) {
-      dispatch(addExtraInfoClass('block-container_selected-full'));
-    } else {
-      dispatch(addExtraClass({panel: 'calculator', id, extraClass: 'block-container_selected'}));
-    }
 
+    if (isInfoBlock(id)) {
+      dragOverInfoBlock(classes);
+    } else {
+      dragOverBlock(id, classes);
+    }
   }
 
   const handleDragEnd = () => {
@@ -49,18 +55,58 @@ export const useDragAndDrop = () => {
   };
 
   const handleDrop = (e, {id, panel}) => {
-    console.log(currentDragInfo)
     e.preventDefault();
+    e.stopPropagation();
     if (panel === 'template') {
       return;
     }
-    if (id === 0) {
-      dispatch(removeExtraInfoClass('block-container_selected-full'));
+
+    if (isInfoBlock(id)) {
+      dropInfoBlock();
+    } else {
+      dropBlock(id)
     }
-    if (currentDragInfo.panel === 'template') {
-      dispatch(choseComponent(id));
+
+    if (draggedInfo.panel === 'template') {
+      dispatch(choseComponent(draggedInfo.id));
+      dispatch(addExtraClass({
+        panel: 'template',
+        id: draggedInfo.id,
+        extraClass: BLOCK_INACTIVE,
+      }))
     }
   };
+
+  const isInfoBlock = (id) => id === 0;
+
+  const dragOverInfoBlock = (classes) => {
+    if (classes.includes(INFO_BLOCK_SELECTED)) {
+      return;
+    }
+
+    dispatch(addExtraInfoClass(INFO_BLOCK_SELECTED));
+
+  }
+
+  const dragOverBlock = (id, classes) => {
+    if (classes.includes(BLOCK_SELECTED)) {
+      return;
+    }
+
+    dispatch(addExtraClass({
+      panel: 'calculator',
+      id, 
+      BLOCK_SELECTED,
+    }))
+  }
+
+  const dropInfoBlock = () => {
+    dispatch(removeExtraInfoClass(INFO_BLOCK_SELECTED));
+  }
+
+  const dropBlock = (id, classes) => {
+
+  }
 
   return [
     mode === 'constructor',

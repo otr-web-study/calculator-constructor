@@ -18,7 +18,7 @@ const BlockContainer = ({children, dragInfo, draggable=false, classes=[], extraC
       draggable={draggable && isAllowedDrag}
       onDragStart={(e) => handleDragStart(e, dragInfo)}
       onDragLeave={(e) => handleDragLeave(e, dragInfo)}
-      onDragOver={(e) => handleDragOver(e, dragInfo)}
+      onDragOver={(e) => handleDragOver(e, dragInfo, classes)}
       onDragEnd={(e) => handleDragEnd(e, dragInfo)}
       onDrop={(e) => handleDrop(e, dragInfo)}>
       {children}
@@ -27,3 +27,5 @@ const BlockContainer = ({children, dragInfo, draggable=false, classes=[], extraC
 };
 
 export default BlockContainer;
+export const BLOCK_INACTIVE = 'block-container_inactive';
+export const BLOCK_SELECTED = 'block-container_selected';

@@ -1,12 +1,15 @@
 import { useSelector } from 'react-redux';
 
 import { selectInfoClasses } from '../../futures/calcComponents/calcComponentsSlice';
-import './InfoBlock.css';
 import BlockContainer from '../BlockContainer';
+import './InfoBlock.css';
 import icon from './icon.png';
 
-const InfoBlock = () => {
-  const classes = useSelector(selectInfoClasses);
+const InfoBlock = ({empty}) => {
+  const classes = [...useSelector(selectInfoClasses)];
+  if (empty) {
+    classes.push('info-block_empty')
+  }
 
   return (
     <BlockContainer 
@@ -25,3 +28,4 @@ const InfoBlock = () => {
 };
 
 export default InfoBlock;
+export const INFO_BLOCK_SELECTED = 'info-block_selected';
