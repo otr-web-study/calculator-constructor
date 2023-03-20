@@ -30,6 +30,7 @@ const initialState = {
   calculator: [],
   infoClasses: [],
   draggedInfo: null,
+  highlighted: null,
 }
 
 const calcComponentsSlice = createSlice({
@@ -42,8 +43,15 @@ const calcComponentsSlice = createSlice({
       state.calculator.push({
         ...component,
         classes: [],
+        draggable: id !== 1,
       });
       component.draggable = false;
+    },
+    removeComponent: (state, action) => {
+      const id = action.payload;
+      const component = state.template.find(item => item.id === id);
+      component.draggable = true;
+      state.calculator = state.calculator.filter(item => item.id !== id);
     },
     moveComponent: ({calculator}, action) => {
       const { id, idx } = action.payload;
@@ -80,6 +88,12 @@ const calcComponentsSlice = createSlice({
     },
     removeDraggedInfo: (state) => {
       state.draggedInfo = null;
+    },
+    setHighlighted: (state, action) => {
+      state.highlighted = action.payload;
+    },
+    removeHighlighted: (state) => {
+      state.highlighted = null;
     }
   }
 });
@@ -87,15 +101,28 @@ const calcComponentsSlice = createSlice({
 export const calcComponentsReducer = calcComponentsSlice.reducer;
 export const {
   choseComponent,
+  removeComponent,
+  moveComponent,
   addExtraClass,
   removeExtraClass,
   addExtraInfoClass,
   removeExtraInfoClass,
   setDraggable,
   setDraggedInfo,
+  setHighlighted,
   removeDraggedInfo,
+  removeHighlighted,
 } = calcComponentsSlice.actions;
 export const selectTemplateComponents = ({ calcComponents: { template } }) => template;
 export const selectCalcComponents = ({ calcComponents: { calculator }}) => calculator;
 export const selectInfoClasses = ({ calcComponents: { infoClasses }}) => infoClasses;
-export const selectDraggedInfo = ({ calcComponents: { draggedInfo }}) => draggedInfo;
+export const selectUIInfo = ( { calcComponents: {
+  draggedInfo,
+  calculator,
+  highlighted
+} }) => ({
+  draggedInfo,
+  qty: calculator.length,
+  ids: calculator.map(({ id }) => id) ,
+  highlighted,
+});

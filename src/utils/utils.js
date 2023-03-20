@@ -7,7 +7,7 @@ export const getNumbers = () => {
   while (numbers.length < 9) {
     const count = 9 - numbers.length;
     for (let i = count - 2; i <= count; i++) {
-      numbers.push(i);
+      numbers.push(`${i}`);
     }
   }
 

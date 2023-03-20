@@ -17,5 +17,9 @@
 }
 
 .block-container_selected {
-  border-bottom: 1px solid #5D5FEF;;
+  border-bottom: 1px solid #5D5FEF;
+}
+
+.block-container_selected-top {
+  border-top: 1px solid #5D5FEF;
 }

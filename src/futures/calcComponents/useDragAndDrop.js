@@ -6,65 +6,78 @@ import {
   addExtraInfoClass,
   removeExtraClass,
   removeExtraInfoClass,
-  choseComponent,
-  setDraggedInfo,
   removeDraggedInfo,
-  selectDraggedInfo,
+  removeHighlighted,
+  removeComponent,
+  choseComponent,
+  moveComponent,
+  setDraggedInfo,
+  setHighlighted,
+  selectUIInfo,
 } from './calcComponentsSlice';
 
 import { INFO_BLOCK_SELECTED } from '../../components/InfoBloc';
-import { BLOCK_INACTIVE, BLOCK_SELECTED } from '../../components/BlockContainer';
+import { 
+  BLOCK_INACTIVE, BLOCK_SELECTED, BLOCK_SELECTED_TOP
+} from '../../components/BlockContainer';
 
 export const useDragAndDrop = () => {
   const dispatch = useDispatch();
   const { mode } = useSelector(selectControls);
-  const draggedInfo = useSelector(selectDraggedInfo);
+  const { draggedInfo, qty, ids, highlighted } = useSelector(selectUIInfo);
 
-  const handleDragStart = (e, dragInfo) => {
+  const handleDragStart = (dragInfo) => {
     dispatch(setDraggedInfo(dragInfo));
   };
 
-  const handleDragLeave = (e, { panel, id}) => {
+  const handleDragLeave = ({ panel}) => {
     if (panel === 'template') {
       return;
     }
-
-    if (isInfoBlock(id)) {
-      dispatch(removeExtraInfoClass(INFO_BLOCK_SELECTED));
-    } else {
-      dispatch(removeExtraClass({panel: 'calculator', id, extraClass: BLOCK_SELECTED}))
+    if (highlighted) {
+      removeHighlight();
     }
-
   };
 
-  const handleDragOver = (e, { panel, id}, classes) => {
+  const handleDragOver = (e, { panel, id}) => {
     e.preventDefault();
     if (panel === 'template') {
       return;
     }
+    
+    let highlightedId;
+    let extraClass;
 
-    if (isInfoBlock(id)) {
-      dragOverInfoBlock(classes);
+    if (!qty) {
+      highlightedId = 0;
+      extraClass = INFO_BLOCK_SELECTED;
+    } else if (isDisplay(draggedInfo.id)) {
+      highlightedId = ids[0];
+      extraClass = BLOCK_SELECTED_TOP;
+    } else if (isDisplay(id)) {
+      highlightedId = id;
+      extraClass = BLOCK_SELECTED;
+    } else if (isInfoBlock(id)) {
+      highlightedId = ids[qty - 1];
+      extraClass = BLOCK_SELECTED;
     } else {
-      dragOverBlock(id, classes);
+      const indexId = ids.indexOf(id);
+      if (!indexId) {
+        highlightedId = ids[indexId];
+        extraClass = BLOCK_SELECTED_TOP;
+      } else {
+        highlightedId = ids[indexId - 1];
+        extraClass = BLOCK_SELECTED;
+      }
     }
+
+    highlightBlock(highlightedId, extraClass); 
   }
-
-  const handleDragEnd = () => {
-
-  };
 
   const handleDrop = (e, {id, panel}) => {
     e.preventDefault();
-    e.stopPropagation();
     if (panel === 'template') {
       return;
-    }
-
-    if (isInfoBlock(id)) {
-      dropInfoBlock();
-    } else {
-      dropBlock(id)
     }
 
     if (draggedInfo.panel === 'template') {
@@ -73,39 +86,62 @@ export const useDragAndDrop = () => {
         panel: 'template',
         id: draggedInfo.id,
         extraClass: BLOCK_INACTIVE,
-      }))
+      }));
+      if (isDisplay(draggedInfo.id)) {
+        dispatch(moveComponent({id: draggedInfo.id, idx: 0}))
+      }
+      dispatch(removeDraggedInfo());
+    } else {
+      const idx = isDisplay(id) ? 1 : ids.indexOf(id);
+      if (idx !== ids.indexOf(draggedInfo.id)) {
+        dispatch(moveComponent({id: draggedInfo.id, idx}));
+      }
     }
+
+    removeHighlight();
   };
 
-  const isInfoBlock = (id) => id === 0;
-
-  const dragOverInfoBlock = (classes) => {
-    if (classes.includes(INFO_BLOCK_SELECTED)) {
+  const handleDoubleClick = ({id, panel}) => {
+    if (panel === 'template' || mode === 'runtime') {
       return;
     }
 
-    dispatch(addExtraInfoClass(INFO_BLOCK_SELECTED));
-
-  }
-
-  const dragOverBlock = (id, classes) => {
-    if (classes.includes(BLOCK_SELECTED)) {
-      return;
-    }
-
-    dispatch(addExtraClass({
-      panel: 'calculator',
-      id, 
-      BLOCK_SELECTED,
+    dispatch(removeComponent(id));
+    dispatch(removeExtraClass({
+      panel: 'template',
+      id,
+      extraClass: BLOCK_INACTIVE,
     }))
   }
 
-  const dropInfoBlock = () => {
-    dispatch(removeExtraInfoClass(INFO_BLOCK_SELECTED));
+  const isInfoBlock = (id) => id === 0;
+
+  const isDisplay = (id) => id === 1;
+
+  const highlightBlock = (id, extraClass) => {
+    if (isInfoBlock(id)) {
+      dispatch(addExtraInfoClass(extraClass));
+    } else {
+      dispatch(addExtraClass({
+        id,
+        extraClass,
+        panel: 'calculator'
+      }))
+    }
+
+    dispatch(setHighlighted({id, extraClass}));
   }
 
-  const dropBlock = (id, classes) => {
-
+  const removeHighlight = () => {
+    if (isInfoBlock(highlighted.id)) {
+      dispatch(removeExtraInfoClass(highlighted.extraClass));
+    } else {
+      dispatch(removeExtraClass({
+        ...highlighted,
+        panel: 'calculator',
+      }));
+    }
+    dispatch(removeHighlighted());
   }
 
   return [
@@ -113,7 +149,7 @@ export const useDragAndDrop = () => {
     handleDragStart,
     handleDragLeave,
     handleDragOver,
-    handleDragEnd,
     handleDrop,
+    handleDoubleClick,
   ]
 }
