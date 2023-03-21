@@ -2,5 +2,9 @@ export {
   default,
   BLOCK_INACTIVE, 
   BLOCK_SELECTED,
-  BLOCK_SELECTED_TOP
+  BLOCK_SELECTED_TOP,
+  BLOCK_LOCKED,
+  BLOCK_SMALL,
+  MAX_BIG_LENGTH,
+  MAX_SMALL_LENGTH,
 } from './BlockContainer';

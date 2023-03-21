@@ -1,6 +1,15 @@
 import { useSelector, useDispatch } from 'react-redux';
 
 import { selectControls, setDisplay, setStack } from './controlsSlice';
+import { addExtraClass, removeExtraClass } from '../calcComponents/calcComponentsSlice';
+
+import {
+  MAX_BIG_LENGTH,
+  MAX_SMALL_LENGTH,
+  BLOCK_SMALL,
+} from '../../components/BlockContainer';
+
+const MESSAGE_UNDEFINED = 'Не определено';
 
 export const useCalculator = () => {
   const dispatch = useDispatch();
@@ -20,13 +29,14 @@ export const useCalculator = () => {
     else if (isOperation(top)) {
       stack.push(top);
       top = letter === '.' ? '0.' : letter;
-    } else if (top.length < 9) {
+    } else if (top.length < MAX_SMALL_LENGTH
+              && !(top === '0' && letter === '0')) {
       top = `${top}${letter}`.replace(/^(0+)([1-9])/, '$2');
     }
 
     stack.push(top);
     dispatch(setStack(stack));
-    dispatch(setDisplay(top));
+    formatSetDisplay(top);
   }
 
   const handleOperation = (operation) => {
@@ -42,10 +52,10 @@ export const useCalculator = () => {
       const [err, value] = evalStack();
       if (err) {
         stack = [value];
-        dispatch(setDisplay('Не определено'))
+        formatSetDisplay(MESSAGE_UNDEFINED);
       } else {
         stack = [value, operation];
-        dispatch(setDisplay(formatValue(value)));
+        formatSetDisplay(value);
       }
     }
 
@@ -58,17 +68,17 @@ export const useCalculator = () => {
     }
     const [err, value] = evalStack();
     if (err) {
-      dispatch(setDisplay('Не определено'));
-      dispatch(setStack[value]);
+      formatSetDisplay(MESSAGE_UNDEFINED);
+      dispatch(setStack([value]));
     } else {
-      dispatch(setDisplay(formatValue(value)));
+      formatSetDisplay(value);
       dispatch(setStack([value, '=']));
     }
   }
 
   const isRuntimeMode = () => mode === 'runtime';
 
-  const isOperation = (term) => new RegExp(/^[-+/x]{1,1}$/).test(term);
+  const isOperation = (term) => /^[-+/x]{1,1}$/.test(term);
 
   const evalStack = () => {
     let [err, res] = [false, '0'];
@@ -85,7 +95,29 @@ export const useCalculator = () => {
     return [err, res];
   }
 
-  const formatValue = (value) => value.slice(0, 9);
+  const formatSetDisplay = (value) => {
+    const extraClassInfo = {
+      panel: 'calculator',
+      id: 1,
+      extraClass: BLOCK_SMALL,
+    }
+
+    if (value.length > MAX_BIG_LENGTH) {
+      dispatch(addExtraClass(extraClassInfo));
+    } else {
+      dispatch(removeExtraClass(extraClassInfo));
+    }
+
+    if (value.length > MAX_SMALL_LENGTH) {
+      if (/[+-]?([0-9]*[.])?[0-9]+/.test(value)) {
+        value = `${parseFloat(value).toExponential(10)}`;
+      } else {
+        value = value.substr(0, MAX_SMALL_LENGTH);
+      }
+    }
+
+    dispatch(setDisplay(value));
+  }
 
   return {
     handleNumber,

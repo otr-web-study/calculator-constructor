@@ -50,6 +50,9 @@ const calcComponentsSlice = createSlice({
     removeComponent: (state, action) => {
       const id = action.payload;
       const component = state.template.find(item => item.id === id);
+      if (!component) {
+        return;
+      }
       component.draggable = true;
       state.calculator = state.calculator.filter(item => item.id !== id);
     },
@@ -62,11 +65,17 @@ const calcComponentsSlice = createSlice({
       const {panel, id = null, extraClass} = action.payload;
       const items = state[panel];
       const component = items.find(item => item.id === id);
+      if (!component) {
+        return;
+      }
       component.classes = [...(new Set([...component.classes, extraClass]))];
     },
     removeExtraClass: (state, action) => {
       const {panel, id, extraClass} = action.payload;
       const component = state[panel].find(item => item.id === id);
+      if (!component) {
+        return;
+      }
       component.classes = component.classes.filter(item => item !== extraClass);
     },
     addExtraInfoClass: (state, action) => {

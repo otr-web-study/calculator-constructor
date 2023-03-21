@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux';
 
 import { selectControls } from '../../futures/controls/controlsSlice';
-import BlockContainer from '../BlockContainer';
 import './Display.css';
+import BlockContainer from '../BlockContainer';
 
 export const Display = (props) => {
   const { value } = props;

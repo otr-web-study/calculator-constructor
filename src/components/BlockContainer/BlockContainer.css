@@ -23,3 +23,12 @@
 .block-container_selected-top {
   border-top: 1px solid #5D5FEF;
 }
+
+.block-container_locked {
+  cursor:no-drop;
+}
+
+.block-container_small-font > * {
+  font-size: 19px;
+  line-height: 23px;
+}

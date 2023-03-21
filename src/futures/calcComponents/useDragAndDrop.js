@@ -18,7 +18,7 @@ import {
 
 import { INFO_BLOCK_SELECTED } from '../../components/InfoBloc';
 import { 
-  BLOCK_INACTIVE, BLOCK_SELECTED, BLOCK_SELECTED_TOP
+  BLOCK_INACTIVE, BLOCK_SELECTED, BLOCK_SELECTED_TOP, BLOCK_LOCKED
 } from '../../components/BlockContainer';
 
 export const useDragAndDrop = () => {
@@ -56,7 +56,8 @@ export const useDragAndDrop = () => {
       extraClass = BLOCK_SELECTED_TOP;
     } else if (isDisplay(id)) {
       highlightedId = id;
-      extraClass = BLOCK_SELECTED;
+      extraClass = BLOCK_LOCKED;
+      e.dataTransfer.dropEffect = 'none';
     } else if (isInfoBlock(id)) {
       highlightedId = ids[qty - 1];
       extraClass = BLOCK_SELECTED;
@@ -91,8 +92,8 @@ export const useDragAndDrop = () => {
         dispatch(moveComponent({id: draggedInfo.id, idx: 0}))
       }
       dispatch(removeDraggedInfo());
-    } else {
-      const idx = isDisplay(id) ? 1 : ids.indexOf(id);
+    } else if(!isDisplay(id)) {
+      const idx = ids.indexOf(id);
       if (idx !== ids.indexOf(draggedInfo.id)) {
         dispatch(moveComponent({id: draggedInfo.id, idx}));
       }
