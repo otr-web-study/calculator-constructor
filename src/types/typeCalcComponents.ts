@@ -1,0 +1,1 @@
+export type TypeCalcComponents = 'display' | 'operations' | 'numbers' | 'calculate';

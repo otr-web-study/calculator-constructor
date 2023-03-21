@@ -1,7 +1,9 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector } from 'redux-hooks';
 
-import { selectControls, setDisplay, setStack } from './controlsSlice';
+import { setDisplay, setStack } from './controlsSlice';
+import { selectControls } from './controlsSelectors';
 import { addExtraClass, removeExtraClass } from '../calcComponents/calcComponentsSlice';
+import { ExtraClassInfo } from 'types';
 
 import {
   MAX_BIG_LENGTH,
@@ -11,16 +13,26 @@ import {
 
 const MESSAGE_UNDEFINED = 'Не определено';
 
-export const useCalculator = () => {
-  const dispatch = useDispatch();
-  let { stack, mode } = useSelector(selectControls);
+export const useCalculator = (): {
+  handleNumber: (letter: string) => void,
+  handleOperation: (operation: string) => void,
+  handleCalculate: () => void
+} => {
+  const dispatch = useAppDispatch();
+  const controls = useAppSelector(selectControls);
+  let { stack } = controls;
+  const { mode } = controls;
 
-  const handleNumber = (letter) => {
+  const handleNumber = (letter: string) => {
     if (!isRuntimeMode()) {
       return;
     }
 
     let top = stack.pop();
+
+    if (!top) {
+      return;
+    }
 
     if (top === '=') {
       stack = [];
@@ -39,12 +51,16 @@ export const useCalculator = () => {
     formatSetDisplay(top);
   }
 
-  const handleOperation = (operation) => {
+  const handleOperation = (operation: string) => {
     if (!isRuntimeMode()) {
       return;
     }
     
     const top = stack.pop();
+    if (!top) {
+      return;
+    }
+
     if (isOperation(top) || top === '=') {
       stack.push(operation);
     } else {
@@ -78,9 +94,9 @@ export const useCalculator = () => {
 
   const isRuntimeMode = () => mode === 'runtime';
 
-  const isOperation = (term) => /^[-+/x]{1,1}$/.test(term);
+  const isOperation = (term: string) => /^[-+/x]{1,1}$/.test(term);
 
-  const evalStack = () => {
+  const evalStack = (): [boolean, string] => {
     let [err, res] = [false, '0'];
     try {
       res = `${eval(stack.join('').replace('x', '*'))}`;
@@ -95,8 +111,8 @@ export const useCalculator = () => {
     return [err, res];
   }
 
-  const formatSetDisplay = (value) => {
-    const extraClassInfo = {
+  const formatSetDisplay = (value: string) => {
+    const extraClassInfo: ExtraClassInfo = {
       panel: 'calculator',
       id: 1,
       extraClass: BLOCK_SMALL,
@@ -112,7 +128,7 @@ export const useCalculator = () => {
       if (/[+-]?([0-9]*[.])?[0-9]+/.test(value)) {
         value = `${parseFloat(value).toExponential(10)}`;
       } else {
-        value = value.substr(0, MAX_SMALL_LENGTH);
+        value = value.substring(0, MAX_SMALL_LENGTH);
       }
     }
 

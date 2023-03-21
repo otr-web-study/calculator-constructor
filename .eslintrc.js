@@ -6,7 +6,7 @@ module.exports = {
   'extends': [
     'eslint:recommended',
     'plugin:react/recommended',
-    // 'plugin:@typescript-eslint/recommended'
+    'plugin:@typescript-eslint/recommended'
   ],
   'parserOptions': {
     'ecmaFeatures': {
@@ -27,6 +27,7 @@ module.exports = {
     'react/prop-types': 'off',
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',
-    'no-unused-vars': 1
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['error'],
   }
 };

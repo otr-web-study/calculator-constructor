@@ -6,7 +6,8 @@ import './index.css';
 import App from './App';
 import { store } from './store';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const rootElement = document.getElementById('root') as HTMLDivElement;
+const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <Provider store={store}>

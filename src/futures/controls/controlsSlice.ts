@@ -1,6 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState = {
+type ControlsSlice = {
+  mode: string,
+  display: string,
+  stack: string[],
+}
+
+const initialState: ControlsSlice = {
   mode: 'constructor',
   display: '0',
   stack: ['0'],
@@ -10,13 +16,13 @@ const controlsSlice = createSlice({
   name: 'controls',
   initialState,
   reducers: {
-    setMode: (state, action) => {
+    setMode: (state, action: PayloadAction<string>) => {
       state.mode = action.payload;
     },
-    setDisplay: (state, action) => {
+    setDisplay: (state, action: PayloadAction<string>) => {
       state.display = action.payload;
     },
-    setStack: (state, action) => {
+    setStack: (state, action: PayloadAction<string[]>) => {
       state.stack = action.payload;
     }
   }
@@ -24,10 +30,3 @@ const controlsSlice = createSlice({
 
 export const controlsReducer = controlsSlice.reducer;
 export const { setMode, setDisplay, setStack } = controlsSlice.actions;
-export const selectControls = ({
-  controls: { mode, display, stack } 
-}) => ({
-  mode,
-  display,
-  stack: [...stack],
-})

@@ -3,4 +3,7 @@
   "[javascript]": {
     "javascript.preferences.quoteStyle":"single",
   },
+  "[typescript]": {
+    "typescript.preferences.quoteStyle": "single",
+  },
 }
