@@ -6,3 +6,4 @@ export * from './payloadDraggable';
 export * from './highlightedInfo';
 export * from './extraClassInfo';
 export * from './calcComponentProps';
+export * from './calcMode';

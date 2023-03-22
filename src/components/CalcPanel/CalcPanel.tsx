@@ -8,11 +8,11 @@ const CalcPanel = () => {
 
   const content = items.map(item => render(item));
   if (content.length < 4) {
-    content.push(<InfoBloc key={0} empty={content.length} />)
+    content.push(<InfoBloc key={0} empty={!!content.length} />)
   }
 
   return (
-    <Container className='calc-panel'>
+    <Container extraClass='calc-panel'>
       {content}
     </Container>
   );

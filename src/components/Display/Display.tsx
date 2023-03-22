@@ -1,11 +1,16 @@
 import { useSelector } from 'react-redux';
 
-import { selectControls } from '../../futures/controls/controlsSlice';
+import { selectControls } from '../../futures/controls/controlsSelectors';
 import './Display.css';
 import BlockContainer from '../BlockContainer';
+import { CalcComponentProps } from 'types';
 
-export const Display = (props) => {
-  const { value } = props;
+type DisplayProps = {
+  value?: string
+} & CalcComponentProps;
+
+export const Display = (props: DisplayProps) => {
+  const { value = '0' } = props;
 
   return (
     <BlockContainer {...props}>
@@ -14,7 +19,7 @@ export const Display = (props) => {
   )
 };
 
-export const ActiveDisplay = (props) => {
+export const ActiveDisplay = (props: CalcComponentProps) => {
   const { display } = useSelector(selectControls);
 
   return <Display value={display} {...props} />

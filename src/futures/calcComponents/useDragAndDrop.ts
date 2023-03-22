@@ -1,6 +1,7 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { DragEvent } from 'react';
 
-import { selectControls } from '../controls/controlsSlice';
+import { useAppDispatch, useAppSelector } from 'redux-hooks';
+import { selectControls } from '../controls/controlsSelectors';
 import {
   addExtraClass,
   addExtraInfoClass,
@@ -13,24 +14,32 @@ import {
   moveComponent,
   setDraggedInfo,
   setHighlighted,
-  selectUIInfo,
 } from './calcComponentsSlice';
+import { selectUIInfo } from './calcComponentsSelectors';
+import { DraggedInfo } from 'types';
 
 import { INFO_BLOCK_SELECTED } from '../../components/InfoBloc';
 import { 
   BLOCK_INACTIVE, BLOCK_SELECTED, BLOCK_SELECTED_TOP, BLOCK_LOCKED
 } from '../../components/BlockContainer';
 
-export const useDragAndDrop = () => {
-  const dispatch = useDispatch();
-  const { mode } = useSelector(selectControls);
-  const { draggedInfo, qty, ids, highlighted } = useSelector(selectUIInfo);
+export const useDragAndDrop = (): [
+  boolean,
+  (dragInfo: DraggedInfo) => void,
+  (dragInfo: DraggedInfo) => void,
+  (e: DragEvent<HTMLDivElement>, dragInfo: DraggedInfo) => void,
+  (e: DragEvent<HTMLDivElement>, dragInfo: DraggedInfo) => void,
+  (dragInfo: DraggedInfo) => void,
+] => {
+  const dispatch = useAppDispatch();
+  const { mode } = useAppSelector(selectControls);
+  const { draggedInfo, qty, ids, highlighted } = useAppSelector(selectUIInfo);
 
-  const handleDragStart = (dragInfo) => {
+  const handleDragStart = (dragInfo: DraggedInfo) => {
     dispatch(setDraggedInfo(dragInfo));
   };
 
-  const handleDragLeave = ({ panel}) => {
+  const handleDragLeave = ({ panel}: DraggedInfo) => {
     if (panel === 'template') {
       return;
     }
@@ -39,14 +48,18 @@ export const useDragAndDrop = () => {
     }
   };
 
-  const handleDragOver = (e, { panel, id}) => {
+  const handleDragOver = (e: DragEvent<HTMLDivElement>, { panel, id}: DraggedInfo) => {
     e.preventDefault();
     if (panel === 'template') {
       return;
     }
+
+    if (!draggedInfo) {
+      return;
+    }
     
-    let highlightedId;
-    let extraClass;
+    let highlightedId: number;
+    let extraClass: string;
 
     if (!qty) {
       highlightedId = 0;
@@ -75,9 +88,13 @@ export const useDragAndDrop = () => {
     highlightBlock(highlightedId, extraClass); 
   }
 
-  const handleDrop = (e, {id, panel}) => {
+  const handleDrop = (e: DragEvent<HTMLDivElement>, {id, panel}: DraggedInfo) => {
     e.preventDefault();
     if (panel === 'template') {
+      return;
+    }
+
+    if (!draggedInfo) {
       return;
     }
 
@@ -102,7 +119,7 @@ export const useDragAndDrop = () => {
     removeHighlight();
   };
 
-  const handleDoubleClick = ({id, panel}) => {
+  const handleDoubleClick = ({id, panel}: DraggedInfo) => {
     if (panel === 'template' || mode === 'runtime') {
       return;
     }
@@ -115,11 +132,11 @@ export const useDragAndDrop = () => {
     }))
   }
 
-  const isInfoBlock = (id) => id === 0;
+  const isInfoBlock = (id: number) => id === 0;
 
-  const isDisplay = (id) => id === 1;
+  const isDisplay = (id: number) => id === 1;
 
-  const highlightBlock = (id, extraClass) => {
+  const highlightBlock = (id: number, extraClass: string) => {
     if (isInfoBlock(id)) {
       dispatch(addExtraInfoClass(extraClass));
     } else {
@@ -134,6 +151,10 @@ export const useDragAndDrop = () => {
   }
 
   const removeHighlight = () => {
+    if (!highlighted) {
+      return;
+    }
+
     if (isInfoBlock(highlighted.id)) {
       dispatch(removeExtraInfoClass(highlighted.extraClass));
     } else {

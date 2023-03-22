@@ -30,7 +30,7 @@ export const useCalcPanel = (): [
       return (
         mode === 'runtime' ?
           <ActiveDisplay {...props} /> :
-          <Display {...props} value={0} />
+          <Display {...props} />
       )
     case 'operations':
       return (

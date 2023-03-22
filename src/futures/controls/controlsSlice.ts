@@ -1,7 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { CalcMode } from 'types';
+
 type ControlsSlice = {
-  mode: string,
+  mode: CalcMode,
   display: string,
   stack: string[],
 }
@@ -16,7 +18,7 @@ const controlsSlice = createSlice({
   name: 'controls',
   initialState,
   reducers: {
-    setMode: (state, action: PayloadAction<string>) => {
+    setMode: (state, action: PayloadAction<CalcMode>) => {
       state.mode = action.payload;
     },
     setDisplay: (state, action: PayloadAction<string>) => {

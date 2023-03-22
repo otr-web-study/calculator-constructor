@@ -1,17 +1,23 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector } from 'redux-hooks';
 import { useEffect } from 'react';
 
-import { selectTemplateComponents, addExtraClass } from './calcComponentsSlice';
-import { selectControls } from '../controls/controlsSlice';
+import { addExtraClass } from './calcComponentsSlice';
+import { selectTemplateComponents } from './calcComponentsSelectors';
+import { selectControls } from '../controls/controlsSelectors';
 import { Display } from '../../components/Display';
 import Operations from '../../components/Operations';
 import Numbers from '../../components/Numbers';
 import Calculate from '../../components/Calculate';
+import { CalcComponent, CalcComponentProps } from 'types';
 
-export const useTemplatePanel = () => {
-  const dispatch = useDispatch();
-  const items = useSelector(selectTemplateComponents);
-  const { mode } = useSelector(selectControls);
+export const useTemplatePanel = (): [
+  CalcComponent[],
+  string,
+  (element: CalcComponent) => JSX.Element | null,
+] => {
+  const dispatch = useAppDispatch();
+  const items = useAppSelector(selectTemplateComponents);
+  const { mode } = useAppSelector(selectControls);
 
   useEffect(() => {
     items.map(({id}) => {
@@ -23,8 +29,8 @@ export const useTemplatePanel = () => {
     })
   }, []);
 
-  const render = ({id, type, classes, draggable}) => {
-    const props = {
+  const render = ({id, type, classes, draggable}: CalcComponent) => {
+    const props: CalcComponentProps = {
       dragInfo: {
         panel: 'template',
         id
@@ -37,7 +43,7 @@ export const useTemplatePanel = () => {
     switch(type) {
     case 'display':
       return (
-        <Display value={0} {...props} />
+        <Display {...props} />
       )
     case 'operations':
       return (

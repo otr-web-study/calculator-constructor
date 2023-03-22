@@ -3,8 +3,9 @@ import Button from '../Button';
 import { useCalculator } from '../../futures/controls/useCalculator';
 import { getNumbers } from '../../utils/utils';
 import './Numbers.css';
+import { CalcComponentProps } from 'types';
 
-const Numbers = (props) => {
+const Numbers = (props: CalcComponentProps) => {
   const { handleNumber } = useCalculator();
   const numbers = getNumbers();
   const buttons = numbers.map(title => (

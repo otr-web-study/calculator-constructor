@@ -1,11 +1,15 @@
 import { useSelector } from 'react-redux';
 
-import { selectInfoClasses } from '../../futures/calcComponents/calcComponentsSlice';
+import { selectInfoClasses } from 'futures/calcComponents/calcComponentsSelectors';
 import BlockContainer from '../BlockContainer';
 import './InfoBlock.css';
 import icon from './icon.png';
 
-const InfoBlock = ({empty}) => {
+type InfoBlockProps = {
+  empty: boolean
+}
+
+const InfoBlock = ({empty}: InfoBlockProps) => {
   const classes = [...useSelector(selectInfoClasses)];
   if (empty) {
     classes.push('info-block_empty')
@@ -15,7 +19,7 @@ const InfoBlock = ({empty}) => {
     <BlockContainer 
       extraClass='info-block' 
       classes={classes}
-      dragInfo={{panel: 'calc', id: 0}}>
+      dragInfo={{panel: 'calculator', id: 0}}>
       <img src={icon} alt='icon'></img>
       <p className='info-block__accent-text'>
         Перетащите сюда

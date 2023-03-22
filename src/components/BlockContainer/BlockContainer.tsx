@@ -1,7 +1,21 @@
+import { ReactNode } from 'react';
+
 import { useDragAndDrop } from '../../futures/calcComponents/useDragAndDrop';
 import './BlockContainer.css';
+import { CalcComponentProps } from 'types';
 
-const BlockContainer = ({children, dragInfo, draggable=false, classes=[], extraClass=''}) => {
+type BlockContainerProps = {
+  children?: ReactNode,
+  extraClass?: string
+} & CalcComponentProps;
+
+const BlockContainer = ({
+  children,
+  dragInfo,
+  draggable=false,
+  classes=[],
+  extraClass=''
+}: BlockContainerProps) => {
   const classNames = classes.join(' ');
   const [
     isAllowedDrag,

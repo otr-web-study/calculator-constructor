@@ -1,8 +1,13 @@
 import './ControlButton.css';
 import { useControlButton } from '../../futures/controls/useControlButton';
 import { capitalize } from '../../utils/utils';
+import { CalcMode } from 'types';
 
-const ControlButton = ({ type }) => {
+type ControlButtonProps = {
+  type: CalcMode
+}
+
+const ControlButton = ({ type }: ControlButtonProps) => {
   const [mode, onClick] = useControlButton();
   const activeClass = type === mode ? 'control-button_active' : '';
 
